@@ -1,185 +1,160 @@
-# 🔍 PyPortScanner
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ortisec/pyportiscanner/e097fa149a5b1741b8630e09c2177bf3af346bea/src/assets/pyportiscanner-logo.svg"
+       width="25%"
+       alt="Logo PyPortiScanner">
+</p>
 
-Una herramienta eficiente de **escaneo de puertos TCP** desarrollada en Python, diseñada para identificar puertos abiertos en hosts y dominios de forma rápida utilizando **multithreading**.
 
-**👤 Desarrollado por:** [ortisec](https://ortisec.site/)  
-**🔗 GitHub:** [ortisec/pyportscanner](https://github.com/ortisec/pyportiscanner)  
-**🐋 Docker Hub:** [ortisec/pyportscanner](https://hub.docker.com/r/ortisec/pyportiscanner)
+
+# PyPortiScanner
+
+PyPortiScanner es una herramienta de escaneo de puertos TCP escrita en Python, enfocada en velocidad y simplicidad. Ofrece una CLI práctica y una API de fácil integración para detectar puertos abiertos en hosts o dominios mediante ejecución concurrente.
 
 ---
 
 ## Características
 
-- ✅ **Escaneo TCP rápido** usando sockets
-- ⚡ **Multithreading** para escaneo paralelo (hasta 100 hilos por defecto)
-- 🎯 **Soporte para rangos de puertos personalizados** (ej: 1-1024)
-- 🌐 **Resolución de dominios** automática (acepta IP o nombres de dominio)
-- ⏱️ **Timeout configurable** por puerto
-- 🐳 **Containerizado con Docker** para fácil despliegue
-- 🔧 **Interfaz CLI intuitiva** con argparse
-- 📦 **Instalable como herramienta de línea de comandos**
+- Escaneo TCP concurrente (multithreading)
+- Resolución automática de dominios
+- Configuración de timeout y número de workers
+- Uso como CLI y como librería de Python
 
 ---
 
-## 📦 Requisitos Previos
+## Instalación
 
-### Opción 1: Instalación Local
-- **Python:** 3.14 o superior
-- **Sistema operativo:** Windows, Linux, macOS
-- **Permisos:** Acceso de red a los hosts objetivo
-
-### Opción 2: Docker
-- **Docker:** Versión 20.0 o superior
-
----
-
-## 🚀 Instalación
-
-### Instalación Local
-
-1. **Clona el repositorio:**
 ```bash
-git clone https://github.com/ortisec/pyportscanner.git
-cd pyportscanner
+pip install pyportiscanner
 ```
 
-2. **Instala el paquete:**
+Requisitos: Python 3.14 o superior.
+
+Instalación desde código fuente (desarrollo):
 ```bash
+git clone https://github.com/ortisec/pyportiscanner.git
+cd pyportiscanner
 pip install -e .
 ```
 
-Esto instalará la herramienta como comando `pps` disponible globalmente.
-
-3. **Verifica la instalación:**
+Docker:
 ```bash
-pps --help
-```
-
-### Usando Docker
-
-1. **Construye la imagen:**
-```bash
-docker build -t pyportscanner .
-```
-
-2. **Ejecuta el escaneo:**
-```bash
-docker run pyportscanner <target> --ports 1-1024
+docker build -t pyportiscanner .
 ```
 
 ---
 
-## 💻 Uso
+## Uso Rápido (CLI)
 
-### Línea de Comandos
-
-**Sintaxis básica:**
 ```bash
-pps <target> --ports <rango>
+pps <objetivo> --ports <rango> [opciones]
 ```
 
-#### Parámetros Requeridos:
-
-| Parámetro | Descripción | Ejemplo |
-|-----------|-------------|---------|
-| `target` | IP o dominio objetivo | `192.168.1.1` o `example.com` |
-| `--ports` | Rango de puertos a escanear | `1-1024` |
-
-#### Parámetros Opcionales:
-
-| Parámetro | Descripción | Valor por defecto | Rango |
-|-----------|-------------|-------------------|-------|
-| `--timeout` | Tiempo de espera por puerto (segundos) | `1.0` | `0.1-10.0` |
-| `--workers` | Número de hilos concurrentes | `100` | `1-1000` |
-
-### Como Módulo Python
-
-Puedes importar la función `scan_ports` en tus scripts:
-
-```python
-from pyportscanner.scanner import scan_ports
-
-# Escanear puertos del 1 al 1024 en localhost
-open_ports = scan_ports(
-    host="127.0.0.1",
-    ports=list(range(1, 1025)),
-    timeout=1.0,
-    workers=100
-)
-
-print(f"Puertos abiertos: {open_ports}")
+Ejemplo:
+```bash
+pps 192.168.1.10 --ports 1-1024
 ```
+
+Opciones comunes:
+- `--timeout <segundos>` (por defecto: 1.0)
+- `--workers <número>` (por defecto: 100)
 
 ---
 
-## 🔄 Ejemplos
+## Parámetros y opciones
 
-### Ejemplo 1: Escaneo Básico
-Escanear los puertos comunes (1-1024) en un servidor:
-```bash
-pps 192.168.1.100 --ports 1-1024
-```
+- Requeridos:
+  - `target`: IP o dominio objetivo (ej. `192.168.1.10` o `example.com`)
+  - `--ports`: Rango de puertos a escanear (formato `inicio-fin`, ej. `1-1024`)
+- Opcionales:
+  - `--timeout`: Tiempo de espera por puerto (segundos). Rango recomendado: `0.1–10.0`
+  - `--workers`: Número de hilos concurrentes. Rango recomendado: `1–1000`
 
-**Salida esperada:**
+Salida típica:
 ```
-[+] Escaneando 192.168.1.100...
+[+] Escaneando 192.168.1.10...
 [+] 22 OPEN
 [+] 80 OPEN
 [+] 443 OPEN
 ```
 
-### Ejemplo 2: Escaneo con Dominio
-Resolver y escanear un dominio:
+---
+
+## API de Python
+
+```python
+from pyportiscanner.scanner import scan_ports
+
+puertos = scan_ports(
+    host="scanme.nmap.org",
+    ports=list(range(20, 100)),
+    timeout=2.0,
+    workers=50
+)
+
+print(puertos)
+```
+
+---
+
+## Ejemplos
+
+- Escaneo básico:
+```bash
+pps 192.168.1.100 --ports 1-1024
+```
+
+- Escaneo de dominio:
 ```bash
 pps example.com --ports 80-443
 ```
 
-El programa resuelve automáticamente el dominio a su IP.
-
-### Ejemplo 3: Escaneo Personalizado
-Escanear con timeout mayor y menos hilos:
+- Escaneo completo con ajustes:
 ```bash
 pps 10.0.0.5 --ports 1-65535 --timeout 2.0 --workers 50
 ```
 
-### Ejemplo 4: Escaneo Rápido de Puertos Específicos
-Escanear solo puertos web:
+- Puertos específicos (rango individual por puerto):
 ```bash
 pps localhost --ports 80-80,443-443,8080-8080,3000-3000
 ```
 
-### Ejemplo 5: Usar con Docker
+---
+
+## Docker
+
+Construcción y ejecución:
 ```bash
-docker run pyportscanner 192.168.1.1 --ports 1-1024
+docker build -t pyportiscanner .
+docker run --rm pyportiscanner 192.168.1.1 --ports 1-1024
 ```
 
 ---
 
-## ⚙️ Opciones Avanzadas
+## Opciones avanzadas y rendimiento
 
-### Ajuste de Rendimiento
-
-**Para redes lentas o con alto latency:**
+- Redes lentas o alta latencia:
 ```bash
 pps target --ports 1-1024 --timeout 3.0 --workers 50
 ```
 
-**Para escaneos rápidos de redes locales:**
+- Redes locales rápidas:
 ```bash
 pps target --ports 1-1024 --timeout 0.5 --workers 200
 ```
 
-### Rango Máximo de Puertos
-El rango válido de puertos es **1 a 65535**. Intentar un rango fuera de estos límites resultará en un error.
+- Rango válido de puertos: `1–65535`
+
+Rendimiento esperado:
+- LAN: 1000 puertos ~ 5–10 s; 65535 puertos ~ 5–15 min
+- Internet: 1000 puertos ~ 30–60 s (variable)
 
 ---
 
-## 🏗️ Arquitectura
+## Arquitectura del proyecto
 
-### Estructura del Proyecto
 ```
-pyportscanner/
-├── src/pyportscanner/
+pyportiscanner/
+├── src/pyportiscanner/
 │   ├── __init__.py          # Inicializador del paquete
 │   ├── scanner.py           # Lógica principal de escaneo
 │   └── cli.py               # Interfaz de línea de comandos
@@ -188,184 +163,64 @@ pyportscanner/
 └── README.md                # Este archivo
 ```
 
-### Componentes Principales
-
-#### `scanner.py`
-Módulo core que contiene la lógica de escaneo:
-
-- **`scan_port(host, port, timeout)`**: Escanea un puerto individual
-  - Retorna `True` si el puerto está abierto
-  - Retorna `False` si está cerrado o no responde
-
-- **`scan_ports(host, ports, timeout, workers)`**: Escanea múltiples puertos
-  - Utiliza `ThreadPoolExecutor` para paralelismo
-  - Retorna lista de puertos abiertos ordenada
-
-#### `cli.py`
-Interfaz de línea de comandos:
-
-- **`parse_ports(port_range)`**: Valida y parsea el rango de puertos
-- **`resolve_target(target)`**: Resuelve IP o dominio
-- **`main()`**: Función principal que coordina el escaneo
-
-### Flujo de Ejecución
-```
-1. Usuario ejecuta: pps <target> --ports <rango>
-   ↓
-2. CLI parsea argumentos y valida entradas
-   ↓
-3. Se resuelve el target (IP o dominio)
-   ↓
-4. Se valida el rango de puertos
-   ↓
-5. scanner.scan_ports() inicia el escaneo paralelo
-   ↓
-6. ThreadPoolExecutor crea hilos concurrentes
-   ↓
-7. Cada hilo escanea un puerto individual
-   ↓
-8. Resultados se recopilan y ordenan
-   ↓
-9. Se imprime salida con puertos abiertos
-```
+Componentes principales:
+- `scanner.py`
+  - `scan_port(host, port, timeout)` → True si abierto, False si cerrado
+  - `scan_ports(host, ports, timeout, workers)` → lista de puertos abiertos ordenada
+- `cli.py`
+  - `parse_ports(port_range)` → validación y parseo de rangos
+  - `resolve_target(target)` → resolución de IP/dominio
+  - `main()` → coordinación del flujo de ejecución
 
 ---
 
-## ⚠️ Limitaciones y Consideraciones
+## Seguridad y consideraciones
 
-### Requisitos Técnicos
-- Requiere **Python 3.14+** (versión actual experimental)
-- No tiene dependencias externas
-- Compatible con sistemas POSIX y Windows
-
-### Consideraciones de Seguridad
-- **Uso legal:** Solo escanea hosts para los que tienes permiso
-- **Firewall:** Algunos hosts pueden filtrar puertos con firewalls
-- **Rate limiting:** Algunos ISP pueden detectar escaneos activos
-- **Responsabilidad:** El usuario es responsable del uso de esta herramienta
-
-### Limitaciones Conocidas
-- **Escaneo SYN:** Usa escaneo TCP completo (no SYN half-open)
-- **UDP:** Solo soporta puertos TCP, no UDP
-- **Resolución DNS:** Requiere conectividad a servidores DNS
-- **Timeout mínimo:** No se recomiendan timeouts menores a 0.1 segundos
-
-### Casos de Uso
-✅ Auditorías autorizadas de seguridad  
-✅ Administración de servidores propios  
-✅ Laboratorios de práctica  
-❌ Escaneo de sistemas sin autorización (ILEGAL)
+- Escanea únicamente sistemas para los que tengas autorización.
+- Los resultados pueden variar por firewalls y condiciones de red.
+- El uso indebido puede ser ilegal; el usuario es responsable de su aplicación.
 
 ---
 
-## 🔧 Solución de Problemas
+## Solución de problemas
 
-### Problema: "ArgumentTypeError: El rango de puertos debe ser del tipo 1-1024"
-
-**Causa:** Formato incorrecto del rango de puertos
-
-**Solución:** Usa el formato `inicio-fin` (ej: `1-1024`)
-
-### Problema: "ArgumentTypeError: IP o dominio inválido"
-
-**Causa:** IP o dominio no válido o no resolvible
-
-**Solución:** Verifica la IP o dominio, y asegúrate de tener conectividad
-
-### Problema: Escaneo muy lento
-
-**Causa:** Timeout muy alto o número de workers muy bajo
-
-**Solución:** 
+- Error de formato del rango de puertos:
+  - Mensaje: `ArgumentTypeError: El rango de puertos debe ser del tipo 1-1024`
+  - Solución: usa `inicio-fin` (ej. `1-1024`)
+- IP o dominio inválido:
+  - Mensaje: `ArgumentTypeError: IP o dominio inválido`
+  - Solución: verifica conectividad y formato
+- Escaneo lento:
+  - Causa: timeout alto o pocos workers
+  - Solución:
 ```bash
 pps target --ports 1-1024 --timeout 0.5 --workers 200
 ```
-
-### Problema: Resultados inconsistentes
-
-**Causa:** Problemas de red o firewall intermitente
-
-**Solución:** Aumenta el timeout y ejecuta nuevamente
+- Resultados inconsistentes:
+  - Causa: red inestable o firewall
+  - Solución: aumenta timeout y reintenta
 
 ---
 
-## 📊 Rendimiento Esperado
+## Enlaces
 
-**En red local (LAN):**
-- Escaneo de 1000 puertos: ~5-10 segundos
-- Escaneo de 65535 puertos: ~5-15 minutos
-
-**En internet:**
-- Variabilidad alta según la calidad de conexión
-- Escaneo de 1000 puertos: ~30-60 segundos
-- Recomendado usar timeout de 2-3 segundos
+- GitHub: https://github.com/ortisec/pyportiscanner
+- Docker Hub: https://hub.docker.com/r/ortisec/pyportiscanner
+- Autor: https://ortisec.site/
 
 ---
 
-## 📝 Configuración en pyproject.toml
+## Licencia
 
-```toml
-[project]
-name = "pyportscanner"
-version = "0.1.0"
-description = "TCP Port Scanner básico en Python"
-requires-python = ">=3.14"
-
-[project.scripts]
-pps = "pyportscanner.cli:main"
-```
-
-**Punto de entrada:** El comando `pps` ejecuta la función `main()` desde `cli.py`
+Proyecto de código abierto. Consulte el repositorio para más detalles.
 
 ---
 
-## 🐳 Docker
+## Contribuir
 
-### Crear Imagen
-```bash
-docker build -t pyportscanner:latest .
-```
-
-### Ejecutar Contenedor
-```bash
-docker run --rm pyportscanner 192.168.1.1 --ports 1-1024
-```
-
-### Especificar Opciones
-```bash
-docker run --rm pyportscanner target --ports 1-65535 --timeout 2.0 --workers 50
-```
-
----
-
-## 📜 Licencia
-
-Este proyecto es de **código abierto**. Consulta con el autor para detalles de licencia específicos.
-
-**Autor:** ortisec  
-**Repositorio:** https://github.com/ortisec/pyportscanner  
-**Sitio Web:** https://ortisec.site/
-
----
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-1. Fork el repositorio
-2. Crea una rama para tu feature
-3. Commitea tus cambios
-4. Push a la rama
-5. Abre un Pull Request
-
----
-
-## ❓ Preguntas y Soporte
-
-Para reportar bugs, sugerencias o preguntas:
-- Abre un issue en [GitHub Issues](https://github.com/ortisec/pyportscanner/issues)
-- Contacta al autor en https://ortisec.site/
-
----
-
-**Última actualización:** 26 de enero de 2026  
-**Versión del Proyecto:** 0.1.0
+Las contribuciones son bienvenidas:
+1. Realiza un fork del repositorio.
+2. Crea una rama para tu funcionalidad o corrección.
+3. Realiza commits atómicos y descriptivos.
+4. Envía tus cambios mediante un Pull Request.
+5. Asegura que tu PR incluya pruebas y documentación cuando aplique.

@@ -2,7 +2,7 @@
 name = "pyportiscanner"
 version = "0.1.1"
 description = "TCP Port Scanner básico en Python"
-readme = "README.md"
+readme = "README.pypi.md"
 authors = [{ name = "ortisec", email = "ortizjose1604@gmail.com"}]
 requires-python = ">=3.10"
 dependencies = []
