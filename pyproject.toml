@@ -1,10 +1,18 @@
 [project]
-name = "pyportscanner"
-version = "0.1.0"
+name = "pyportiscanner"
+version = "0.1.1"
 description = "TCP Port Scanner básico en Python"
 readme = "README.md"
-requires-python = ">=3.14"
+authors = [{ name = "ortisec", email = "ortizjose1604@gmail.com"}]
+requires-python = ">=3.10"
 dependencies = []
 
 [project.scripts]
-pps = "pyportscanner.cli:main"
+pps = "pyportiscanner.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pyportiscanner"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
