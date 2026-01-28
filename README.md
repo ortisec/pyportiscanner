@@ -3,8 +3,8 @@
 Una herramienta eficiente de **escaneo de puertos TCP** desarrollada en Python, diseñada para identificar puertos abiertos en hosts y dominios de forma rápida utilizando **multithreading**.
 
 **👤 Desarrollado por:** [ortisec](https://ortisec.site/)  
-**🔗 GitHub:** [ortisec/pyportscanner](https://github.com/ortisec/pyportscanner)  
-**🐋 Docker Hub:** [ortisec/pyportscanner](https://hub.docker.com/r/ortisec/pyportscanner)
+**🔗 GitHub:** [ortisec/pyportscanner](https://github.com/ortisec/pyportiscanner)  
+**🐋 Docker Hub:** [ortisec/pyportscanner](https://hub.docker.com/r/ortisec/pyportiscanner)
 
 ---
 
